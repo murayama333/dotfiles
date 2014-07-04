@@ -1,0 +1,13 @@
+[user]
+	name = murayama333
+       	email = murayama333@gmail.com
+[color]
+      	ui = auto
+[alias]
+      	ci = commit
+       	st = status
+      	co = checkout
+	br = branch
+	hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
+[github]
+    	user = murayama333
