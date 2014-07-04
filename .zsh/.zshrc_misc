@@ -1,0 +1,5 @@
+function server () {
+    port=$1
+    python -m SimpleHTTPServer $1
+}
+
