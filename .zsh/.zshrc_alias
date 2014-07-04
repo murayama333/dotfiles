@@ -7,7 +7,6 @@ alias la='ll -A'
 alias l='ls -CF'
 
 alias time='/usr/bin/time -p'
-
 alias history='history -i'
 
 autoload -Uz zmv
@@ -25,3 +24,7 @@ if [[ -x `which colordiff` ]]; then
     fi
 
 export LESS='-MR'
+
+
+alias g="git"
+alias be="bundle exec"
