@@ -1,73 +1,54 @@
-# https://github.com/catatsuy/dot.zsh/blob/master/.zshrc
-# fpath=($ZDOTDIR/functions/completions/src(N-/) $ZDOTDIR/functions/docker-zsh-completion(N-/) $ZDOTDIR/functions/padrino-zsh-completion(N-/) ${fpath})
+# Set up the prompt
 
-autoload -Uz compinit
-compinit -u
+autoload -Uz promptinit
+promptinit
+prompt adam1
 
+setopt histignorealldups sharehistory
+
+# Use emacs keybindings even if our EDITOR is set to vi
+bindkey -e
+
+# Keep 1000 lines of history within the shell and save it to ~/.zsh_history:
 HISTFILE=~/.zsh_history
 HISTSIZE=1000000
 SAVEHIST=1000000
 
-setopt hist_ignore_dups
-setopt hist_ignore_all_dups
-setopt hist_save_no_dups
-setopt share_history
-setopt auto_pushd
-setopt pushd_ignore_dups
-setopt complete_aliases
-setopt list_packed
-setopt nolistbeep
-setopt transient_rprompt
-setopt hist_no_store
-setopt auto_menu
-setopt extended_glob
-setopt notify
-setopt nonomatch
+# Use modern completion system
+autoload -Uz compinit
+compinit
 
-bindkey -e
-
-PROMPT="%n@%m%% "
-
-typeset -U path cdpath fpath manpath
-
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z} r:|[-_.]=**'
-
-zstyle ':completion:*' ignore-parents parent pwd ..
-
-autoload history-search-end
-zle -N history-beginning-search-backward-end history-search-end
-zle -N history-beginning-search-forward-end history-search-end
-
-bindkey "^P" history-beginning-search-backward-end
-bindkey "^N" history-beginning-search-forward-end
-
-bindkey "^[[Z" reverse-menu-complete
-
-zstyle ':completion:*' verbose yes
-zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
-zstyle ':completion:*:messages' format '%F{YELLOW}%d'$DEFAULT
-zstyle ':completion:*:warnings' format '%F{RED}No matches for:''%F{YELLOW} %d'$DEFAULT
-zstyle ':completion:*:descriptions' format '%F{YELLOW}completing %B%d%b'$DEFAULT
-zstyle ':completion:*:options' description 'yes'
-zstyle ':completion:*:descriptions' format '%F{yellow}Completing %B%d%b%f'$DEFAULT
-
+zstyle ':completion:*' auto-description 'specify: %d'
+zstyle ':completion:*' completer _expand _complete _correct _approximate
+zstyle ':completion:*' format 'Completing %d'
 zstyle ':completion:*' group-name ''
+zstyle ':completion:*' menu select=2
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' list-colors ''
+zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
+zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*'
+zstyle ':completion:*' menu select=long
+zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
+zstyle ':completion:*' use-compctl false
+zstyle ':completion:*' verbose true
 
-zstyle ':completion:*:default' menu select=2
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
+zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 
-zstyle ':completion:*' list-separator '-->'
-zstyle ':completion:*:manuals' separate-sections true
 
-zstyle ':completion:*:manuals' separate-sections true
+autoload -Uz vcs_info
+zstyle ':vcs_info:*' formats '[%b]'
+zstyle ':vcs_info:*' actionformats '[%b|%a]'
+precmd () {
+    psvar=()
+    LANG=en_US.UTF-8 vcs_info
+    [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
+}
 
-zstyle ':completion:*:*files' ignored-patterns '*?.o' '*?~' '*\#'
+RPROMPT="%1(v|%F{green}%1v%f|)"
 
-# Kill
-zstyle ':completion:*:*:*:*:processes' command 'ps -u $USER -o pid,user,comm -w'
-zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;36=0=01'
-zstyle ':completion:*:*:kill:*' menu yes select
-zstyle ':completion:*:*:kill:*' force-list always
-zstyle ':completion:*:*:kill:*' insert-ids single
+# https://github.com/catatsuy/dot.zsh/blob/master/.zshrc
+# fpath=($ZDOTDIR/functions/completions/src(N-/) $ZDOTDIR/functions/docker-zsh-completion(N-/) $ZDOTDIR/functions/padrino-zsh-completion(N-/) ${fpath})
 
 # load .zshrc_*
 [ -f $ZDOTDIR/.zshrc_`uname`  ] && . $ZDOTDIR/.zshrc_`uname`
@@ -83,3 +64,4 @@ if [ -d ${HOME}/.rbenv ]; then
   # . ~/.rbenv/completions/rbenv.zsh
 fi
 
+eval "$(dircolors -b)"
