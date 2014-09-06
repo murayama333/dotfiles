@@ -3,3 +3,7 @@ function server () {
     python -m SimpleHTTPServer $1
 }
 
+function pretty_json(){
+	ruby -r json -e "puts JSON.pretty_generate(JSON.parse(File.read(ARGV[0])))" $1
+}
+
